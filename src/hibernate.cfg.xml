@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration SYSTEM 
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+   <session-factory>
+   <property name="hibernate.dialect">
+      org.hibernate.dialect.MySQLDialect
+   </property>
+   <property name="hibernate.connection.driver_class">
+      com.mysql.jdbc.Driver
+   </property>
+
+   <property name="hibernate.connection.url">
+      jdbc:mysql://localhost/edutechdb
+   </property>
+   <property name="hibernate.connection.username">
+      root
+   </property>
+   <property name="hibernate.connection.password">
+     140397dn
+   </property>
+   <mapping class="mx.itson.eduTech.entidades.Maestro"/>
+   <mapping class="mx.itson.eduTech.entidades.Alumno"/>
+   <mapping class="mx.itson.eduTech.entidades.Curso"/>
+   <mapping class="mx.itson.eduTech.entidades.Tarea"/>
+   <mapping class="mx.itson.eduTech.entidades.CursoAlumno"/>
+   <mapping class="mx.itson.eduTech.entidades.Entrega"/>
+   <mapping class="mx.itson.eduTech.entidades.Envio"/>
+   <mapping class="mx.itson.eduTech.entidades.Archivo"/>
+</session-factory>
+</hibernate-configuration>

@@ -6,12 +6,26 @@
 package mx.itson.eduTech.gui;
 
 import java.awt.Color;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import mx.itson.eduTech.entidades.Curso;
+import mx.itson.eduTech.entidades.CursoAlumno;
+import mx.itson.eduTech.entidades.Tarea;
+import static mx.itson.eduTech.gui.Principal.alumno;
+import static mx.itson.eduTech.gui.Principal.maestro;
+import mx.itson.eduTech.negocio.CursoAlumnoNegocio;
+import mx.itson.eduTech.negocio.CursoNegocio;
+import mx.itson.eduTech.negocio.TareaNegocio;
 
 /**
- *
- * @author Valeria
+ * @author Daniel Solano, Valeria García, Jesús Torres.
  */
 public class PrincipalAlumno extends javax.swing.JFrame {
+
+    public DefaultTableModel modelo1, modelo2;
+    public DefaultComboBoxModel cbModel;
 
     /**
      * Creates new form PrincipalAlumno
@@ -20,6 +34,52 @@ public class PrincipalAlumno extends javax.swing.JFrame {
         initComponents();
         panelCursos.setVisible(false);
         panelCursosDisponibles.setVisible(false);
+        lbNombreUsuario.setText(alumno.getNombre());
+        tbTareas.getColumnModel().getColumn(0).setMaxWidth(0);
+        tbTareas.getColumnModel().getColumn(0).setMinWidth(0);
+        tbTareas.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
+        tbTareas.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
+        tbTareas.getColumnModel().getColumn(2).setMaxWidth(0);
+        tbTareas.getColumnModel().getColumn(2).setMinWidth(0);
+        tbTareas.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(0);
+        tbTareas.getTableHeader().getColumnModel().getColumn(2).setMinWidth(0);
+        tbCursos.getColumnModel().getColumn(0).setMaxWidth(0);
+        tbCursos.getColumnModel().getColumn(0).setMinWidth(0);
+        tbCursos.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
+        tbCursos.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
+        cargarCursos();
+    }
+
+    /**
+     * Metodo que permite cargar los cursos que tiene el alumno.
+     */
+    public void cargarCursos() {
+        CursoAlumnoNegocio can = new CursoAlumnoNegocio();
+        TareaNegocio tn = new TareaNegocio();
+        CursoNegocio cn =new CursoNegocio();
+        List<CursoAlumno> cursos = can.obtenerCursosPorAlumno(alumno.getId());
+        if (!cursos.isEmpty()) {
+            modelo1 = (DefaultTableModel) tbCursos.getModel();
+            modelo2 = (DefaultTableModel) tbTareas.getModel();
+            modelo1.getDataVector().clear();
+            modelo2.getDataVector().clear();
+            for (CursoAlumno ca : cursos) {
+                Curso c=cn.obtenerPorId(ca.getIdCurso());
+                modelo1.addRow(new Object[]{
+                    c.getId(),
+                    c.getNombre()
+                });
+                if (!c.getTareas().isEmpty()) {
+                    for (Tarea t : c.getTareas()) {
+                        modelo2.addRow(new Object[]{
+                            t.getId(),
+                            t.getNombre(),
+                            c.getId()
+                        });
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -32,6 +92,8 @@ public class PrincipalAlumno extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        lbNombreUsuario = new javax.swing.JLabel();
+        lbRow1 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         lbRow = new javax.swing.JLabel();
@@ -42,12 +104,12 @@ public class PrincipalAlumno extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        metroTableUI1 = new win8.swing.MetroTableUI();
+        tbTareas = new win8.swing.MetroTableUI();
         panelCursos = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        metroTableUI2 = new win8.swing.MetroTableUI();
+        tbCursos = new win8.swing.MetroTableUI();
         btnUnirseGrupo1 = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
         panelCursosDisponibles = new javax.swing.JPanel();
@@ -56,12 +118,28 @@ public class PrincipalAlumno extends javax.swing.JFrame {
         btnCancelar = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cbCursos = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(246, 246, 246));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lbNombreUsuario.setFont(new java.awt.Font("Yu Gothic UI Semibold", 1, 18)); // NOI18N
+        lbNombreUsuario.setForeground(new java.awt.Color(255, 255, 255));
+        lbNombreUsuario.setText("Nombre del usuario");
+        jPanel1.add(lbNombreUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(1050, 0, 230, 70));
+
+        lbRow1.setFont(new java.awt.Font("Yu Gothic UI Semibold", 0, 24)); // NOI18N
+        lbRow1.setForeground(new java.awt.Color(255, 255, 255));
+        lbRow1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbRow1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/sort-down16.png"))); // NOI18N
+        lbRow1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                lbRow1MousePressed(evt);
+            }
+        });
+        jPanel1.add(lbRow1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1280, 0, 70, 70));
 
         jLabel6.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 24)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(30, 86, 160));
@@ -123,17 +201,38 @@ public class PrincipalAlumno extends javax.swing.JFrame {
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 30, 60));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/barras-EduTec.png"))); // NOI18N
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1370, 70));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1380, 70));
 
-        metroTableUI1.setModel(new javax.swing.table.DefaultTableModel(
+        tbTareas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Tareas"
+                "id", "Tarea", "idCurso"
             }
-        ));
-        jScrollPane1.setViewportView(metroTableUI1);
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tbTareas.setRowHeight(40);
+        tbTareas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbTareasMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tbTareas);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1050, 60, 320, 660));
 
@@ -148,15 +247,15 @@ public class PrincipalAlumno extends javax.swing.JFrame {
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/cabecera-tabla.png"))); // NOI18N
         panelCursos.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 30, 270, 50));
 
-        metroTableUI2.setModel(new javax.swing.table.DefaultTableModel(
+        tbCursos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Cursos"
+                "id", "Cursos"
             }
         ));
-        jScrollPane2.setViewportView(metroTableUI2);
+        jScrollPane2.setViewportView(tbCursos);
 
         panelCursos.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, 300, 210));
 
@@ -185,6 +284,11 @@ public class PrincipalAlumno extends javax.swing.JFrame {
         btnUnirseGrupo.setText("Unirse");
         btnUnirseGrupo.setBorder(null);
         btnUnirseGrupo.setContentAreaFilled(false);
+        btnUnirseGrupo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUnirseGrupoActionPerformed(evt);
+            }
+        });
         panelCursosDisponibles.add(btnUnirseGrupo, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 150, 110, 30));
 
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/buttonimg.png"))); // NOI18N
@@ -208,9 +312,7 @@ public class PrincipalAlumno extends javax.swing.JFrame {
         jLabel12.setFont(new java.awt.Font("Yu Gothic UI Semibold", 0, 18)); // NOI18N
         jLabel12.setText("Cursos disponibles:");
         panelCursosDisponibles.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 50, -1, -1));
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        panelCursosDisponibles.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 90, 240, 30));
+        panelCursosDisponibles.add(cbCursos, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 90, 240, 30));
 
         jPanel1.add(panelCursosDisponibles, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 400, 410, 230));
 
@@ -229,16 +331,16 @@ public class PrincipalAlumno extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void lbInicioMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbInicioMousePressed
-        // TODO add your handling code here:
+        this.dispose();
         PrincipalAlumno p = new PrincipalAlumno();
         p.setVisible(true);
     }//GEN-LAST:event_lbInicioMousePressed
 
     private void lbCursosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbCursosMousePressed
         // TODO add your handling code here:
-        
+        cargarCursos();
         panelCursos.setVisible(true);
-        
+
     }//GEN-LAST:event_lbCursosMousePressed
 
     private void lbRowMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbRowMousePressed
@@ -248,7 +350,7 @@ public class PrincipalAlumno extends javax.swing.JFrame {
 
     private void lbCursosMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbCursosMouseReleased
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_lbCursosMouseReleased
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -256,12 +358,63 @@ public class PrincipalAlumno extends javax.swing.JFrame {
         panelCursosDisponibles.setVisible(false);
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    /**
+     * Metodo que permite cargar los cursos disponibles para ingresar.
+     */
+    public void cargarCursosDisponibles(){
+        CursoAlumnoNegocio can = new CursoAlumnoNegocio();
+        List<Curso> cursos = can.obtenerCursosDisponibles(alumno.getId());
+        if (cursos.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay cursos disponibles");
+        } else {
+            cbModel=(DefaultComboBoxModel) cbCursos.getModel();
+            cbModel.removeAllElements();
+            for(Curso c : cursos){
+                cbModel.addElement(c);
+            }
+            panelCursos.setVisible(false);
+            panelCursosDisponibles.setVisible(true);
+        }
+    }
     private void btnUnirseGrupo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirseGrupo1ActionPerformed
-        // TODO add your handling code here:
-        panelCursos.setVisible(false);
-        panelCursosDisponibles.setVisible(true);
-        
+        cargarCursosDisponibles();
     }//GEN-LAST:event_btnUnirseGrupo1ActionPerformed
+
+    private void btnUnirseGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirseGrupoActionPerformed
+        Curso c=(Curso) cbCursos.getSelectedItem();
+        CursoAlumnoNegocio can= new CursoAlumnoNegocio();
+        CursoAlumno ca = new CursoAlumno(0, alumno.getId(), c.getId());
+        int id=can.guardar(ca);
+        if(id!=-1){
+            JOptionPane.showMessageDialog(this, "Se unió al curso");
+            panelCursos.setVisible(false);
+            panelCursosDisponibles.setVisible(false);
+        }
+    }//GEN-LAST:event_btnUnirseGrupoActionPerformed
+static Tarea tarea;
+static Curso curso;
+    private void tbTareasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbTareasMouseClicked
+        int fila=tbTareas.getSelectedRow();
+        if(fila!=-1){
+            modelo1=(DefaultTableModel) tbTareas.getModel();
+            TareaNegocio tn = new TareaNegocio();
+            CursoNegocio cn = new CursoNegocio();
+            int id =(int) modelo1.getValueAt(fila, 0);
+            int idCurso=(int) modelo1.getValueAt(fila,2);
+            tarea=tn.obtenerPorId(id);
+            curso=cn.obtenerPorId(idCurso);
+            this.dispose();
+            new TareaAlumno().setVisible(true);
+        }
+    }//GEN-LAST:event_tbTareasMouseClicked
+
+    private void lbRow1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbRow1MousePressed
+        alumno=null;
+        maestro=null;
+        this.dispose();
+        new Principal().setVisible(true);
+        
+    }//GEN-LAST:event_lbRow1MousePressed
 
     /**
      * @param args the command line arguments
@@ -302,7 +455,7 @@ public class PrincipalAlumno extends javax.swing.JFrame {
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnUnirseGrupo;
     private javax.swing.JButton btnUnirseGrupo1;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<Curso> cbCursos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -320,14 +473,12 @@ public class PrincipalAlumno extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lbCursos;
     private javax.swing.JLabel lbInicio;
+    private javax.swing.JLabel lbNombreUsuario;
     private javax.swing.JLabel lbRow;
     private javax.swing.JLabel lbRow1;
-    private javax.swing.JLabel lbRow2;
-    private javax.swing.JLabel lbRow3;
-    private javax.swing.JLabel lbRow4;
-    private win8.swing.MetroTableUI metroTableUI1;
-    private win8.swing.MetroTableUI metroTableUI2;
     private javax.swing.JPanel panelCursos;
     private javax.swing.JPanel panelCursosDisponibles;
+    private win8.swing.MetroTableUI tbCursos;
+    private win8.swing.MetroTableUI tbTareas;
     // End of variables declaration//GEN-END:variables
 }

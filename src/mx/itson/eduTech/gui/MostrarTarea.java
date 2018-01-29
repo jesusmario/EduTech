@@ -5,17 +5,108 @@
  */
 package mx.itson.eduTech.gui;
 
+import java.text.SimpleDateFormat;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.SpinnerDateModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.table.DefaultTableModel;
+import mx.itson.eduTech.entidades.Alumno;
+import mx.itson.eduTech.entidades.Envio;
+import static mx.itson.eduTech.gui.Principal.alumno;
+import static mx.itson.eduTech.gui.Principal.maestro;
+import static mx.itson.eduTech.gui.PrincipalAlumno.tarea;
+import static mx.itson.eduTech.gui.TareaAlumno.entrega;
+import static mx.itson.eduTech.gui.TareaAlumno.envio;
+import mx.itson.eduTech.negocio.AlumnoNegocio;
+import mx.itson.eduTech.negocio.EntregaNegocio;
+import mx.itson.eduTech.negocio.EnvioNegocio;
+
 /**
- *
- * @author Valeria
+ * @author Daniel Solano, Valeria García, Jesús Torres.
  */
 public class MostrarTarea extends javax.swing.JFrame {
 
+    DefaultTableModel modelo;
+    SpinnerNumberModel spModel;
     /**
      * Creates new form MostrarTareaAlumno
      */
     public MostrarTarea() {
         initComponents();
+        tbEnvios.getColumnModel().getColumn(0).setMaxWidth(0);
+        tbEnvios.getColumnModel().getColumn(0).setMinWidth(0);
+        tbEnvios.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
+        tbEnvios.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
+        panelCalificar.setVisible(false);
+        
+        if (maestro != null) {
+            spModel=(SpinnerNumberModel) spCalificacion.getModel();
+            spModel.setMaximum(tarea.getMaxPuntos());
+            cargarEnvios();
+            if (!entrega.getCalificacion().equals("0")) {
+                lbCalificacion.setText(entrega.getCalificacion());
+            }
+        } else {
+            if (alumno != null) {
+                btnCalificar.setVisible(false);
+                lbCalificar.setVisible(false);
+                cargarEnvioAlumno(alumno);
+            }
+        }
+    }
+
+    /**
+     * Metodo que permite cargar el envio del envio.
+     * @param alumno El alumno que carga el envio.
+     */
+    public void cargarEnvioAlumno(Alumno alumno) {
+        lbNombreAlumno.setText(alumno.getNombre());
+        lbAchivo.setText(envio.getArchivo().getNombre() + " (" + envio.getArchivo().getPeso() + "Kb)");
+        lbNombreArchivo.setText(envio.getArchivo().getNombre());
+        String aTiempo = "A tiempo";
+        int compararFecha = tarea.getFechaLimite().compareTo(envio.getFecha());
+        if (compararFecha == -1) {
+            aTiempo = "Retardo";
+        }
+        lbEstado.setText(aTiempo);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YYYY");
+        lbFechaEntrega.setText(sdf.format(envio.getFecha()));
+        EntregaNegocio en = new EntregaNegocio();
+        entrega = en.obtenerEntrega(alumno, tarea);
+        if (entrega != null) {
+            cargarEnvios();
+        }
+    }
+
+    /**
+     * Metodo que permite cargar los envios del alumno y darles un estatus.
+     */
+    public void cargarEnvios() {
+        modelo = (DefaultTableModel) tbEnvios.getModel();
+        modelo.getDataVector().clear();
+        String aTiempo = "A tiempo";
+        int compararFecha;
+        List<Envio> envios = entrega.getEnvios();
+        if (!envios.isEmpty()) {
+            int i=1;
+            for (Envio envio : envios) {
+                aTiempo = "A tiempo";
+                compararFecha = tarea.getFechaLimite().compareTo(envio.getFecha());
+                if (compararFecha == -1) {
+                    aTiempo = "Retardo";
+                }
+                modelo.addRow(new Object[]{
+                    envio.getId(),
+                    aTiempo,
+                    "#"+i
+                });
+                i++;
+            }
+        }
+        if (!entrega.getCalificacion().equals("0")) {
+            lbCalificacion.setText(entrega.getCalificacion());
+        }
     }
 
     /**
@@ -32,17 +123,25 @@ public class MostrarTarea extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
+        lbNombreAlumno = new javax.swing.JLabel();
+        lbCalificacion = new javax.swing.JLabel();
+        lbNombreArchivo = new javax.swing.JLabel();
+        lbFechaEntrega = new javax.swing.JLabel();
+        lbAchivo = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        metroTableUI1 = new win8.swing.MetroTableUI();
+        tbEnvios = new win8.swing.MetroTableUI();
+        lbEstado = new javax.swing.JLabel();
+        lbEtiquetaCalificacion = new javax.swing.JLabel();
+        panelCalificar = new javax.swing.JPanel();
+        btnAsignarCalificacion = new javax.swing.JButton();
+        jLabel15 = new javax.swing.JLabel();
+        spCalificacion = new javax.swing.JSpinner();
+        btnCalificar = new javax.swing.JButton();
+        lbCalificar = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -53,39 +152,54 @@ public class MostrarTarea extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Yu Gothic UI Semibold", 0, 36)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(246, 246, 246));
         jLabel5.setText("edu");
+        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel5MousePressed(evt);
+            }
+        });
         jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 0, -1, 70));
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/open-book 32.png"))); // NOI18N
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel2MousePressed(evt);
+            }
+        });
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 30, 60));
 
         jLabel4.setBackground(new java.awt.Color(255, 255, 255));
         jLabel4.setFont(new java.awt.Font("Yu Gothic UI Semilight", 0, 36)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(246, 246, 246));
         jLabel4.setText("tech");
+        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel4MousePressed(evt);
+            }
+        });
         jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 0, -1, 70));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/barras-EduTec.png"))); // NOI18N
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1370, 70));
 
-        jLabel3.setFont(new java.awt.Font("Yu Gothic UI Semibold", 0, 24)); // NOI18N
-        jLabel3.setText("García Cobian, Valeria Guadalupe");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 100, -1, -1));
+        lbNombreAlumno.setFont(new java.awt.Font("Yu Gothic UI Semibold", 0, 24)); // NOI18N
+        lbNombreAlumno.setText("García Cobian, Valeria Guadalupe");
+        jPanel1.add(lbNombreAlumno, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 100, -1, -1));
 
-        jLabel6.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
-        jLabel6.setText("Estado (A tiempo o no)");
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 180, -1, -1));
+        lbCalificacion.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
+        lbCalificacion.setText("No Asignada");
+        jPanel1.add(lbCalificacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 180, 200, -1));
 
-        jLabel7.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
-        jLabel7.setText("Nombre del archivo.");
-        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, -1, -1));
+        lbNombreArchivo.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
+        lbNombreArchivo.setText("Nombre del archivo.");
+        jPanel1.add(lbNombreArchivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, -1, -1));
 
-        jLabel8.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
-        jLabel8.setText("Dia de entrega");
-        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 180, 220, -1));
+        lbFechaEntrega.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
+        lbFechaEntrega.setText("Dia de entrega");
+        jPanel1.add(lbFechaEntrega, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 180, 220, -1));
 
-        jLabel11.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 24)); // NOI18N
-        jLabel11.setText("Nombre del archivo.doc  peso del archivo");
-        jPanel1.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 400, -1, -1));
+        lbAchivo.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 24)); // NOI18N
+        lbAchivo.setText("Nombre del archivo.doc  peso del archivo");
+        jPanel1.add(lbAchivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 400, -1, -1));
 
         jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/conteiner-doc-carac.png"))); // NOI18N
         jLabel10.setToolTipText("");
@@ -102,17 +216,87 @@ public class MostrarTarea extends javax.swing.JFrame {
         jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/cabecera-tabla.png"))); // NOI18N
         jPanel1.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(1000, 80, 360, 40));
 
-        metroTableUI1.setModel(new javax.swing.table.DefaultTableModel(
+        tbEnvios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Tareas"
+                "id", "Envios", "NumeroEnvio"
             }
-        ));
-        jScrollPane1.setViewportView(metroTableUI1);
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tbEnvios.setFont(new java.awt.Font("Gungsuh", 0, 24)); // NOI18N
+        tbEnvios.setRowHeight(40);
+        tbEnvios.getTableHeader().setResizingAllowed(false);
+        tbEnvios.getTableHeader().setReorderingAllowed(false);
+        tbEnvios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbEnviosMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tbEnvios);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 70, 380, 650));
+
+        lbEstado.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
+        lbEstado.setText("Estado (A tiempo o no)");
+        jPanel1.add(lbEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 180, -1, 20));
+
+        lbEtiquetaCalificacion.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
+        lbEtiquetaCalificacion.setText("Calificación:");
+        jPanel1.add(lbEtiquetaCalificacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 180, -1, -1));
+
+        panelCalificar.setBackground(new java.awt.Color(255, 255, 255));
+        panelCalificar.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        btnAsignarCalificacion.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
+        btnAsignarCalificacion.setForeground(new java.awt.Color(255, 255, 255));
+        btnAsignarCalificacion.setText("Aceptar");
+        btnAsignarCalificacion.setBorder(null);
+        btnAsignarCalificacion.setContentAreaFilled(false);
+        btnAsignarCalificacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAsignarCalificacionActionPerformed(evt);
+            }
+        });
+        panelCalificar.add(btnAsignarCalificacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 110, 30));
+
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/buttonimg.png"))); // NOI18N
+        panelCalificar.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, -1, -1));
+
+        spCalificacion.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        panelCalificar.add(spCalificacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 110, 30));
+
+        jPanel1.add(panelCalificar, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 80, 130, 90));
+
+        btnCalificar.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
+        btnCalificar.setForeground(new java.awt.Color(255, 255, 255));
+        btnCalificar.setText("Calificar");
+        btnCalificar.setBorder(null);
+        btnCalificar.setContentAreaFilled(false);
+        btnCalificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCalificarActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnCalificar, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 80, 110, 30));
+
+        lbCalificar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/buttonimg.png"))); // NOI18N
+        jPanel1.add(lbCalificar, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 80, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -129,6 +313,74 @@ public class MostrarTarea extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    /**
+     * Botòn que nos permite hacer envios del archivo.
+     * @param evt 
+     */
+    private void tbEnviosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbEnviosMouseClicked
+        int fila = tbEnvios.getSelectedRow();
+        if (fila != -1) {
+            if (alumno != null) {
+                modelo = (DefaultTableModel) tbEnvios.getModel();
+                EnvioNegocio en = new EnvioNegocio();
+                int id = (int) modelo.getValueAt(fila, 0);
+                envio = en.obtenerPorId(id);
+                cargarEnvioAlumno(alumno);
+            }else{
+                modelo = (DefaultTableModel) tbEnvios.getModel();
+                EnvioNegocio en = new EnvioNegocio();
+                int id = (int) modelo.getValueAt(fila, 0);
+                envio = en.obtenerPorId(id);
+                AlumnoNegocio an = new AlumnoNegocio();
+                cargarEnvioAlumno(an.obtenerPorId(entrega.getIdAlumno()));
+            }
+
+        }
+    }//GEN-LAST:event_tbEnviosMouseClicked
+
+    private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
+        this.dispose();
+        if (maestro != null) {
+            new PrincipalMaestro().setVisible(true);
+        } else {
+            new PrincipalAlumno().setVisible(true);
+        }
+
+    }//GEN-LAST:event_jLabel5MousePressed
+
+    private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
+        this.dispose();
+        if (maestro != null) {
+            new PrincipalMaestro().setVisible(true);
+        } else {
+            new PrincipalAlumno().setVisible(true);
+        }
+    }//GEN-LAST:event_jLabel4MousePressed
+
+    private void jLabel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MousePressed
+        this.dispose();
+        if (maestro != null) {
+            new PrincipalMaestro().setVisible(true);
+        } else {
+            new PrincipalAlumno().setVisible(true);
+        }
+    }//GEN-LAST:event_jLabel2MousePressed
+
+    private void btnAsignarCalificacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAsignarCalificacionActionPerformed
+       int calificacion= (int) spModel.getValue();
+       EntregaNegocio en = new EntregaNegocio();
+       entrega.setCalificacion(String.valueOf(calificacion));
+       if(en.editarEntrega(entrega)){
+           JOptionPane.showMessageDialog(this, "Se asignó la calificación a la entrega");
+           lbCalificacion.setText(entrega.getCalificacion());
+           panelCalificar.setVisible(false);
+       }
+    }//GEN-LAST:event_btnAsignarCalificacionActionPerformed
+
+    private void btnCalificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCalificarActionPerformed
+       panelCalificar.setVisible(true);
+    }//GEN-LAST:event_btnCalificarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -167,21 +419,29 @@ public class MostrarTarea extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAsignarCalificacion;
+    private javax.swing.JButton btnCalificar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private win8.swing.MetroTableUI metroTableUI1;
+    private javax.swing.JLabel lbAchivo;
+    private javax.swing.JLabel lbCalificacion;
+    private javax.swing.JLabel lbCalificar;
+    private javax.swing.JLabel lbEstado;
+    private javax.swing.JLabel lbEtiquetaCalificacion;
+    private javax.swing.JLabel lbFechaEntrega;
+    private javax.swing.JLabel lbNombreAlumno;
+    private javax.swing.JLabel lbNombreArchivo;
+    private javax.swing.JPanel panelCalificar;
+    private javax.swing.JSpinner spCalificacion;
+    private win8.swing.MetroTableUI tbEnvios;
     // End of variables declaration//GEN-END:variables
 }

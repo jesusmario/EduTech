@@ -6,13 +6,26 @@
 package mx.itson.eduTech.gui;
 
 import java.awt.Color;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import mx.itson.eduTech.entidades.Alumno;
+import mx.itson.eduTech.entidades.Maestro;
+import mx.itson.eduTech.negocio.AlumnoNegocio;
+import mx.itson.eduTech.negocio.MaestroNegocio;
+import mx.itson.eduTech.persistencia.AlumnoPersistencia;
+import mx.itson.eduTech.persistencia.MaestroPersistencia;
 
 /**
- *
- * @author Valeria
+ * @author Daniel Solano, Valeria García, Jesús Torres.
  */
 public class Principal extends javax.swing.JFrame {
+
+    public static Alumno alumno = new Alumno();
+    public static Maestro maestro = new Maestro();
 
     /**
      * Creates new form Principal
@@ -37,7 +50,7 @@ public class Principal extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jSeparator4 = new javax.swing.JSeparator();
         jLabel17 = new javax.swing.JLabel();
-        txtContraseñaIniciar = new javax.swing.JTextField();
+        txtContrasenaIniciar = new javax.swing.JTextField();
         btnIniciarSesion = new javax.swing.JButton();
         jLabel19 = new javax.swing.JLabel();
         btnCrearcuenta = new javax.swing.JButton();
@@ -64,7 +77,7 @@ public class Principal extends javax.swing.JFrame {
         jLabel13 = new javax.swing.JLabel();
         txtCorre = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
-        txtContraseña = new javax.swing.JTextField();
+        txtContrasena = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
         txtCorreo = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -84,23 +97,28 @@ public class Principal extends javax.swing.JFrame {
         jLabel17.setText("Contraseña");
         jPanel1.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 430, -1, -1));
 
-        txtContraseñaIniciar.setBackground(new java.awt.Color(246, 246, 246));
-        txtContraseñaIniciar.setFont(new java.awt.Font("Yu Gothic Light", 0, 18)); // NOI18N
-        txtContraseñaIniciar.setForeground(new java.awt.Color(30, 86, 160));
-        txtContraseñaIniciar.setText("Introduce tu contraseña");
-        txtContraseñaIniciar.setBorder(null);
-        txtContraseñaIniciar.addActionListener(new java.awt.event.ActionListener() {
+        txtContrasenaIniciar.setBackground(new java.awt.Color(246, 246, 246));
+        txtContrasenaIniciar.setFont(new java.awt.Font("Yu Gothic Light", 0, 18)); // NOI18N
+        txtContrasenaIniciar.setForeground(new java.awt.Color(30, 86, 160));
+        txtContrasenaIniciar.setText("Introduce tu contraseña");
+        txtContrasenaIniciar.setBorder(null);
+        txtContrasenaIniciar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtContraseñaIniciarActionPerformed(evt);
+                txtContrasenaIniciarActionPerformed(evt);
             }
         });
-        jPanel1.add(txtContraseñaIniciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 460, 440, 40));
+        jPanel1.add(txtContrasenaIniciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 460, 440, 40));
 
         btnIniciarSesion.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
         btnIniciarSesion.setForeground(new java.awt.Color(255, 255, 255));
         btnIniciarSesion.setText("Iniciar");
         btnIniciarSesion.setBorder(null);
         btnIniciarSesion.setContentAreaFilled(false);
+        btnIniciarSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnIniciarSesionActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnIniciarSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 540, 110, 30));
 
         jLabel19.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/buttonimg.png"))); // NOI18N
@@ -111,6 +129,11 @@ public class Principal extends javax.swing.JFrame {
         btnCrearcuenta.setText("Crear");
         btnCrearcuenta.setBorder(null);
         btnCrearcuenta.setContentAreaFilled(false);
+        btnCrearcuenta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCrearcuentaActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnCrearcuenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 620, 110, 30));
 
         jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/buttonimg.png"))); // NOI18N
@@ -253,17 +276,17 @@ public class Principal extends javax.swing.JFrame {
         jLabel15.setText("Contraseña");
         jPanel1.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 520, -1, -1));
 
-        txtContraseña.setBackground(new java.awt.Color(246, 246, 246));
-        txtContraseña.setFont(new java.awt.Font("Yu Gothic Light", 0, 18)); // NOI18N
-        txtContraseña.setForeground(new java.awt.Color(30, 86, 160));
-        txtContraseña.setText("Introduce tu contraseña");
-        txtContraseña.setBorder(null);
-        txtContraseña.addActionListener(new java.awt.event.ActionListener() {
+        txtContrasena.setBackground(new java.awt.Color(246, 246, 246));
+        txtContrasena.setFont(new java.awt.Font("Yu Gothic Light", 0, 18)); // NOI18N
+        txtContrasena.setForeground(new java.awt.Color(30, 86, 160));
+        txtContrasena.setText("Introduce tu contraseña");
+        txtContrasena.setBorder(null);
+        txtContrasena.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtContraseñaActionPerformed(evt);
+                txtContrasenaActionPerformed(evt);
             }
         });
-        jPanel1.add(txtContraseña, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 550, 440, 40));
+        jPanel1.add(txtContrasena, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 550, 440, 40));
 
         jLabel16.setFont(new java.awt.Font("Yu Gothic UI Light", 1, 18)); // NOI18N
         jLabel16.setForeground(new java.awt.Color(30, 86, 160));
@@ -298,17 +321,17 @@ public class Principal extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCorreActionPerformed
 
-    private void txtContraseñaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtContraseñaActionPerformed
+    private void txtContrasenaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtContrasenaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtContraseñaActionPerformed
+    }//GEN-LAST:event_txtContrasenaActionPerformed
 
     private void txtCorreoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCorreoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCorreoActionPerformed
 
-    private void txtContraseñaIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtContraseñaIniciarActionPerformed
+    private void txtContrasenaIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtContrasenaIniciarActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtContraseñaIniciarActionPerformed
+    }//GEN-LAST:event_txtContrasenaIniciarActionPerformed
 
     private void jLabel12MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MousePressed
         // TODO add your handling code here:
@@ -346,24 +369,116 @@ public class Principal extends javax.swing.JFrame {
         crearCuenta();
     }//GEN-LAST:event_jLabel10MousePressed
 
+    private void btnIniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesionActionPerformed
+
+        MaestroPersistencia mp = new MaestroPersistencia();
+        AlumnoPersistencia aP = new AlumnoPersistencia();
+        String correo = txtCorreo.getText();
+        String contrasena = txtContrasenaIniciar.getText();
+
+        alumno = aP.obtenerPorCorreoContrasena(correo, contrasena);
+        maestro = mp.obtenerPorCorreoContrasena(correo, contrasena);
+        if (alumno != null) {
+            this.dispose();
+            new PrincipalAlumno().setVisible(true);
+        } else {
+            if (maestro != null) {
+                this.dispose();
+                new PrincipalMaestro().setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "Correo o contraseña incorrecta, verifique.");
+            }
+        }
+
+    }//GEN-LAST:event_btnIniciarSesionActionPerformed
+
+    /**
+     * Metodo que permite verificar el formato correcto del email.
+     * @param correo El correo a verificar.
+     * @return El valor booleano.
+     */
+    public boolean verificarEmail(String correo) {
+        String patternEmail = "[_A-Za-z0-9-\\+]+(\\.[A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        Pattern pattern = Pattern.compile(patternEmail);
+        Matcher matcher = pattern.matcher(correo);
+        return matcher.matches();
+    }
+
+    /**
+     * Metodo que permite limpiar las cajas de texto.
+     */
+    public void limpiarCrear(){
+        txtContrasena.setText("");
+        txtCorre.setText("");
+        txtNombre.setText("");
+    }
+    
+    private void btnCrearcuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearcuentaActionPerformed
+        MaestroNegocio mn = new MaestroNegocio();
+        AlumnoNegocio an = new AlumnoNegocio();
+        String nombre = txtNombre.getText();
+        String correo = txtCorre.getText();
+        String contrasena = txtContrasena.getText();
+        if (verificarEmail(correo)) {
+            if (lbBlueAlumno.isVisible() && !lbBlueInstructor.isVisible()) {
+                Alumno al = new Alumno(0, nombre, correo, contrasena);
+                if (an.verificarUsuario(al.getCorreo()) && mn.verificarUsuario(al.getCorreo())) {
+                    int i = an.guardar(al);
+                    if (i != -1) {
+                        JOptionPane.showMessageDialog(this, "Se ha registrado correctamente");
+                        limpiarCrear();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Ya existe un usuario registrado con este correo");
+                }
+            } else {
+                if (lbBlueInstructor.isVisible() && !lbBlueAlumno.isVisible()) {
+                    Maestro m = new Maestro(0, nombre, correo, contrasena);
+                    if (mn.verificarUsuario(m.getCorreo()) && an.verificarUsuario(m.getCorreo())) {
+                        int id = mn.guardar(m);
+                        if (id != -1) {
+                            JOptionPane.showMessageDialog(this, "Se ha registrado correctamente");
+                            limpiarCrear();
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Ya existe un usuario registrado con este correo");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Seleccione el tipo de cuenta a crear");
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Ingrese un correo válido");
+        }
+
+    }//GEN-LAST:event_btnCrearcuentaActionPerformed
+
+    /**
+     * Metodo que permite activar la opcion de alumno.
+     */
     public void activarAlumno() {
         lbBlueAlumno.setVisible(true);
         lbWhiteAlumno.setVisible(false);
 
     }
-
+    /**
+     * Metodo que permite activar la opcion de instructor.
+     */
     public void activarInstructor() {
         lbBlueInstructor.setVisible(true);
         lbWhiteInstructor.setVisible(false);
     }
 
+    /**
+     * Metodo que permite desactivar todas las cajas de texto.
+     */
     public void desactivarTodo() {
         btnIniciarSesion.setVisible(false);
         jLabel19.setVisible(false);
         txtCorreo.setVisible(false);
         jLabel16.setVisible(false);
         jLabel17.setVisible(false);
-        txtContraseñaIniciar.setVisible(false);
+        txtContrasenaIniciar.setVisible(false);
         lbBlueInstructor.setVisible(false);
         lbWhiteInstructor.setVisible(false);
         jLabel12.setVisible(false);
@@ -375,7 +490,7 @@ public class Principal extends javax.swing.JFrame {
         jLabel15.setVisible(false);
         txtCorre.setVisible(false);
         txtNombre.setVisible(false);
-        txtContraseña.setVisible(false);
+        txtContrasena.setVisible(false);
         jLabel18.setVisible(false);
         btnCrearcuenta.setVisible(false);
         jSeparator2.setVisible(false);
@@ -384,19 +499,24 @@ public class Principal extends javax.swing.JFrame {
 
     }
 
+    /**
+     * Metodo que permite activar la opcion de alumno.
+     */
     public void iniciarSesion() {
         btnIniciarSesion.setVisible(true);
         jLabel19.setVisible(true);
         txtCorreo.setVisible(true);
         jLabel16.setVisible(true);
         jLabel17.setVisible(true);
-        txtContraseñaIniciar.setVisible(true);
+        txtContrasenaIniciar.setVisible(true);
         jSeparator5.setVisible(true);
         jSeparator4.setVisible(true);
     }
 
-    public void crearCuenta()
-    {
+    /**
+     * Metodo que permite activar las cajas de texto para crear una cuenta.
+     */
+    public void crearCuenta() {
         lbBlueInstructor.setVisible(true);
         lbWhiteInstructor.setVisible(true);
         jLabel12.setVisible(true);
@@ -408,17 +528,24 @@ public class Principal extends javax.swing.JFrame {
         jLabel15.setVisible(true);
         txtCorre.setVisible(true);
         txtNombre.setVisible(true);
-        txtContraseña.setVisible(true);
+        txtContrasena.setVisible(true);
         jLabel18.setVisible(true);
         btnCrearcuenta.setVisible(true);
         jSeparator2.setVisible(true);
         jSeparator4.setVisible(true);
         jSeparator5.setVisible(true);
     }
+/**
+ * Metodo que permite resetear el color.
+ * @param label Label que se necesita resetear el color.
+ */
     public void resetColor(JLabel label) {
         label.setForeground(new Color(214, 228, 240));
     }
-
+/**
+ * Metodo que permite resetear el color.
+ * @param label Label que se necesita resetear el color.
+ */
     public void setColor(JLabel label) {
         label.setForeground(new Color(22, 49, 114));
     }
@@ -488,8 +615,8 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JLabel lbBlueInstructor;
     private javax.swing.JLabel lbWhiteAlumno;
     private javax.swing.JLabel lbWhiteInstructor;
-    private javax.swing.JTextField txtContraseña;
-    private javax.swing.JTextField txtContraseñaIniciar;
+    private javax.swing.JTextField txtContrasena;
+    private javax.swing.JTextField txtContrasenaIniciar;
     private javax.swing.JTextField txtCorre;
     private javax.swing.JTextField txtCorreo;
     private javax.swing.JTextField txtNombre;

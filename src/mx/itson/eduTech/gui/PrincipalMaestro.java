@@ -5,11 +5,27 @@
  */
 package mx.itson.eduTech.gui;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import mx.itson.eduTech.entidades.Curso;
+import mx.itson.eduTech.entidades.Tarea;
+import static mx.itson.eduTech.gui.Principal.alumno;
+import static mx.itson.eduTech.gui.Principal.maestro;
+import static mx.itson.eduTech.gui.PrincipalAlumno.curso;
+import static mx.itson.eduTech.gui.PrincipalAlumno.tarea;
+import mx.itson.eduTech.negocio.CursoNegocio;
+import mx.itson.eduTech.negocio.MaestroNegocio;
+import mx.itson.eduTech.negocio.TareaNegocio;
+
 /**
- *
- * @author Valeria
+ * @author Daniel Solano, Valeria García, Jesús Torres.
  */
 public class PrincipalMaestro extends javax.swing.JFrame {
+
+    DefaultTableModel modelo, modelo2;
 
     /**
      * Creates new form PrincipalAlumno
@@ -17,6 +33,50 @@ public class PrincipalMaestro extends javax.swing.JFrame {
     public PrincipalMaestro() {
         initComponents();
         panelCurso.setVisible(false);
+        panelAddCurso.setVisible(false);
+        lbNombre.setText(maestro.getNombre());
+        tbTareas.getColumnModel().getColumn(0).setMaxWidth(0);
+        tbTareas.getColumnModel().getColumn(0).setMinWidth(0);
+        tbTareas.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
+        tbTareas.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
+        tbTareas.getColumnModel().getColumn(2).setMaxWidth(0);
+        tbTareas.getColumnModel().getColumn(2).setMinWidth(0);
+        tbTareas.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(0);
+        tbTareas.getTableHeader().getColumnModel().getColumn(2).setMinWidth(0);
+        tbCursos.getColumnModel().getColumn(0).setMaxWidth(0);
+        tbCursos.getColumnModel().getColumn(0).setMinWidth(0);
+        tbCursos.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
+        tbCursos.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
+        panelCursos.setVisible(false);
+        cargarCursoTareas();
+    }
+
+    /**
+     * Metodo que permite cargar las tareas de los cursos.
+     */
+    public void cargarCursoTareas() {
+        modelo = (DefaultTableModel) tbCursos.getModel();
+        modelo2 = (DefaultTableModel) tbTareas.getModel();
+        modelo.getDataVector().clear();
+        modelo2.getDataVector().clear();
+        CursoNegocio cn = new CursoNegocio();
+        TareaNegocio tn = new TareaNegocio();
+        for (Curso c : maestro.getCursos()) {
+            cbCursos.addItem(c);
+            modelo.addRow(new Object[]{
+                c.getId(),
+                c.getNombre()
+            });
+            if (!c.getTareas().isEmpty()) {
+                for (Tarea t : c.getTareas()) {
+                    modelo2.addRow(new Object[]{
+                        t.getId(),
+                        t.getNombre(),
+                        c.getId()
+                    });
+                }
+            }
+        }
     }
 
     /**
@@ -29,7 +89,7 @@ public class PrincipalMaestro extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel16 = new javax.swing.JLabel();
+        lbNombre = new javax.swing.JLabel();
         lbRow1 = new javax.swing.JLabel();
         lbRow = new javax.swing.JLabel();
         lbCursos = new javax.swing.JLabel();
@@ -41,8 +101,8 @@ public class PrincipalMaestro extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        metroTableUI1 = new win8.swing.MetroTableUI();
-        jSeparator1 = new javax.swing.JSeparator();
+        tbTareas = new win8.swing.MetroTableUI();
+        linea = new javax.swing.JSeparator();
         btnAgregarTarea = new javax.swing.JButton();
         panelCurso = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
@@ -50,28 +110,49 @@ public class PrincipalMaestro extends javax.swing.JFrame {
         txtNombre = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        txtDescripcion = new javax.swing.JTextArea();
         jLabel10 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cbCursos = new javax.swing.JComboBox<>();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        cbEscala = new javax.swing.JComboBox<>();
         btnCrear = new javax.swing.JButton();
         jLabel14 = new javax.swing.JLabel();
         btnCancelar = new javax.swing.JButton();
         jLabel15 = new javax.swing.JLabel();
+        dcFechaLimite = new com.toedter.calendar.JDateChooser();
+        cbHora = new javax.swing.JComboBox<>();
+        cbMinutos = new javax.swing.JComboBox<>();
+        cbTurno = new javax.swing.JComboBox<>();
+        jLabel16 = new javax.swing.JLabel();
+        spMaxPuntos = new javax.swing.JSpinner();
+        panelCursos = new javax.swing.JPanel();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tbCursos = new win8.swing.MetroTableUI();
+        btnUnirseGrupo1 = new javax.swing.JButton();
+        jLabel19 = new javax.swing.JLabel();
+        btnUnirseGrupo2 = new javax.swing.JButton();
+        btnUnirseGrupo4 = new javax.swing.JButton();
+        panelAddCurso = new javax.swing.JPanel();
+        btnCrear1 = new javax.swing.JButton();
+        jLabel21 = new javax.swing.JLabel();
+        btnCancelar1 = new javax.swing.JButton();
+        jLabel22 = new javax.swing.JLabel();
+        txtNombreCurso = new javax.swing.JTextField();
+        jLabel23 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(246, 246, 246));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel16.setFont(new java.awt.Font("Yu Gothic UI Semibold", 1, 18)); // NOI18N
-        jLabel16.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel16.setText("Nombre del usuario");
-        jPanel1.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(1120, 0, -1, 70));
+        lbNombre.setFont(new java.awt.Font("Yu Gothic UI Semibold", 1, 18)); // NOI18N
+        lbNombre.setForeground(new java.awt.Color(255, 255, 255));
+        lbNombre.setText("Nombre del usuario");
+        jPanel1.add(lbNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(1092, 0, 200, 70));
 
         lbRow1.setFont(new java.awt.Font("Yu Gothic UI Semibold", 0, 24)); // NOI18N
         lbRow1.setForeground(new java.awt.Color(255, 255, 255));
@@ -82,7 +163,7 @@ public class PrincipalMaestro extends javax.swing.JFrame {
                 lbRow1MousePressed(evt);
             }
         });
-        jPanel1.add(lbRow1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1290, 0, 30, 70));
+        jPanel1.add(lbRow1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1290, 0, 50, 70));
 
         lbRow.setFont(new java.awt.Font("Yu Gothic UI Semibold", 0, 24)); // NOI18N
         lbRow.setForeground(new java.awt.Color(255, 255, 255));
@@ -146,18 +227,39 @@ public class PrincipalMaestro extends javax.swing.JFrame {
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/cabecera-tabla.png"))); // NOI18N
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(1060, 70, 300, 50));
 
-        metroTableUI1.setModel(new javax.swing.table.DefaultTableModel(
+        tbTareas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Tareas"
+                "id", "Tareas", "idCurso"
             }
-        ));
-        jScrollPane1.setViewportView(metroTableUI1);
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tbTareas.setRowHeight(40);
+        tbTareas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbTareasMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tbTareas);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1050, 60, 320, 660));
-        jPanel1.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 120, 980, 10));
+        jPanel1.add(linea, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 120, 980, 10));
 
         btnAgregarTarea.setFont(new java.awt.Font("Yu Gothic UI Semibold", 0, 14)); // NOI18N
         btnAgregarTarea.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/homework.png"))); // NOI18N
@@ -187,42 +289,37 @@ public class PrincipalMaestro extends javax.swing.JFrame {
                 txtNombreActionPerformed(evt);
             }
         });
-        panelCurso.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 70, 519, 20));
+        panelCurso.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 65, 519, 30));
 
         jLabel9.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
         jLabel9.setText("Descripción:");
         panelCurso.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, -1, -1));
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane2.setViewportView(jTextArea1);
+        txtDescripcion.setColumns(20);
+        txtDescripcion.setRows(5);
+        jScrollPane2.setViewportView(txtDescripcion);
 
-        panelCurso.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 120, 520, 167));
+        panelCurso.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 117, 520, 170));
 
         jLabel10.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
         jLabel10.setText("Máx de pts: ");
-        panelCurso.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 310, 130, 20));
-
-        jTextField2.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 14)); // NOI18N
-        panelCurso.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 310, 110, 20));
+        panelCurso.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 300, 130, 30));
 
         jLabel11.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
         jLabel11.setText("Opciones: ");
-        panelCurso.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 350, 90, 20));
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        panelCurso.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 350, 180, -1));
+        panelCurso.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 350, 90, 30));
+        panelCurso.add(cbCursos, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 350, 270, 30));
 
         jLabel12.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
         jLabel12.setText("Fecha limite:");
-        panelCurso.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 390, -1, -1));
+        panelCurso.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 390, -1, 30));
 
         jLabel13.setFont(new java.awt.Font("Yu Gothic UI Semilight", 0, 18)); // NOI18N
         jLabel13.setText("Escala:");
-        panelCurso.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 430, 100, 20));
+        panelCurso.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 430, 100, 30));
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        panelCurso.add(jComboBox2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 430, 180, -1));
+        cbEscala.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Entregado", "No entregado" }));
+        panelCurso.add(cbEscala, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 430, 270, 30));
 
         btnCrear.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
         btnCrear.setForeground(new java.awt.Color(255, 255, 255));
@@ -253,8 +350,136 @@ public class PrincipalMaestro extends javax.swing.JFrame {
 
         jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/buttonimgdes.png"))); // NOI18N
         panelCurso.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 490, -1, -1));
+        panelCurso.add(dcFechaLimite, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 390, 270, 30));
 
-        jPanel1.add(panelCurso, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 140, 740, 540));
+        cbHora.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "HH", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" }));
+        panelCurso.add(cbHora, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 390, 60, 30));
+
+        cbMinutos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "MM", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59" }));
+        panelCurso.add(cbMinutos, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 390, 60, 30));
+
+        cbTurno.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "AM", "PM" }));
+        panelCurso.add(cbTurno, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 390, 60, 30));
+
+        jLabel16.setText("Hora Límite.");
+        panelCurso.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 360, 100, 20));
+
+        spMaxPuntos.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        spMaxPuntos.setModel(new javax.swing.SpinnerNumberModel(0, 0, 100, 1));
+        panelCurso.add(spMaxPuntos, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 300, 270, 30));
+
+        jPanel1.add(panelCurso, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 130, 740, 540));
+
+        panelCursos.setBackground(new java.awt.Color(255, 255, 255));
+        panelCursos.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel17.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 24)); // NOI18N
+        jLabel17.setForeground(new java.awt.Color(30, 86, 160));
+        jLabel17.setText("Cursos");
+        panelCursos.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 30, 200, 40));
+
+        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/cabecera-tabla.png"))); // NOI18N
+        panelCursos.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 30, 270, 50));
+
+        tbCursos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "id", "Cursos"
+            }
+        ));
+        jScrollPane3.setViewportView(tbCursos);
+
+        panelCursos.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, 300, 210));
+
+        btnUnirseGrupo1.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
+        btnUnirseGrupo1.setForeground(new java.awt.Color(255, 255, 255));
+        btnUnirseGrupo1.setText("Crear");
+        btnUnirseGrupo1.setBorder(null);
+        btnUnirseGrupo1.setContentAreaFilled(false);
+        btnUnirseGrupo1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUnirseGrupo1ActionPerformed(evt);
+            }
+        });
+        panelCursos.add(btnUnirseGrupo1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, 110, 30));
+
+        jLabel19.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/buttonimg.png"))); // NOI18N
+        panelCursos.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, -1, -1));
+
+        btnUnirseGrupo2.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
+        btnUnirseGrupo2.setForeground(new java.awt.Color(255, 255, 255));
+        btnUnirseGrupo2.setText("Crear");
+        btnUnirseGrupo2.setBorder(null);
+        btnUnirseGrupo2.setContentAreaFilled(false);
+        btnUnirseGrupo2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUnirseGrupo2ActionPerformed(evt);
+            }
+        });
+        panelCursos.add(btnUnirseGrupo2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, 110, 30));
+
+        btnUnirseGrupo4.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
+        btnUnirseGrupo4.setForeground(new java.awt.Color(255, 255, 255));
+        btnUnirseGrupo4.setText("Crear");
+        btnUnirseGrupo4.setBorder(null);
+        btnUnirseGrupo4.setContentAreaFilled(false);
+        btnUnirseGrupo4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUnirseGrupo4ActionPerformed(evt);
+            }
+        });
+        panelCursos.add(btnUnirseGrupo4, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 240, 110, 30));
+
+        jPanel1.add(panelCursos, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 70, 360, 290));
+
+        panelAddCurso.setBackground(new java.awt.Color(255, 255, 255));
+        panelAddCurso.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        btnCrear1.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
+        btnCrear1.setForeground(new java.awt.Color(255, 255, 255));
+        btnCrear1.setText("Crear");
+        btnCrear1.setBorder(null);
+        btnCrear1.setContentAreaFilled(false);
+        btnCrear1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCrear1ActionPerformed(evt);
+            }
+        });
+        panelAddCurso.add(btnCrear1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 180, 110, 30));
+
+        jLabel21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/buttonimg.png"))); // NOI18N
+        panelAddCurso.add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 180, -1, -1));
+
+        btnCancelar1.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
+        btnCancelar1.setForeground(new java.awt.Color(30, 86, 160));
+        btnCancelar1.setText("Cancelar");
+        btnCancelar1.setBorder(null);
+        btnCancelar1.setContentAreaFilled(false);
+        btnCancelar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelar1ActionPerformed(evt);
+            }
+        });
+        panelAddCurso.add(btnCancelar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 180, 110, 30));
+
+        jLabel22.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mx/itson/eduTech/imagenes/buttonimgdes.png"))); // NOI18N
+        panelAddCurso.add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 180, -1, -1));
+
+        txtNombreCurso.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 14)); // NOI18N
+        txtNombreCurso.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNombreCursoActionPerformed(evt);
+            }
+        });
+        panelAddCurso.add(txtNombreCurso, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 90, 270, 30));
+
+        jLabel23.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 18)); // NOI18N
+        jLabel23.setText("Nombre:");
+        panelAddCurso.add(jLabel23, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 60, 70, 20));
+
+        jPanel1.add(panelAddCurso, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 380, 390, 250));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -273,12 +498,49 @@ public class PrincipalMaestro extends javax.swing.JFrame {
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         // TODO add your handling code here:
         panelCurso.setVisible(false);
-        
+
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    /**
+     * Metodo que permite limpiar las cajas de texto para crear una tarea.
+     */
+    public void limpiarCrearTarea() {
+        txtNombre.setText("");
+        txtDescripcion.setText("");
+        spMaxPuntos.setValue(0);
+        dcFechaLimite.cleanup();
+        cbEscala.setSelectedIndex(0);
+        cbTurno.setSelectedIndex(0);
+        cbHora.setSelectedIndex(0);
+        cbMinutos.setSelectedIndex(0);
+        cbCursos.setSelectedIndex(0);
+        panelCurso.setVisible(false);
+    }
     private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
-        // TODO add your handling code here:
-        
+        String nombre = txtNombre.getText();
+        String descripcion = txtDescripcion.getText();
+        int maxPuntos = (int) spMaxPuntos.getValue();
+        Date fechaCreacion = new Date();
+        Date fechaLimite = dcFechaLimite.getDate();
+        String escala = (String) cbEscala.getSelectedItem();
+        int formatoHora = cbTurno.getSelectedIndex();
+        int hora = Integer.parseInt((String) cbHora.getSelectedItem());
+        int minutos = Integer.parseInt((String) cbMinutos.getSelectedItem());
+        Curso c = (Curso) cbCursos.getSelectedItem();
+        if (formatoHora == 1) {
+            hora += 12;
+        }
+        fechaLimite.setHours(hora);
+        fechaLimite.setMinutes(minutos);
+        TareaNegocio tn = new TareaNegocio();
+        Tarea t = new Tarea(0, nombre, descripcion, maxPuntos, fechaCreacion, fechaLimite, escala, formatoHora);
+        c.getTareas().add(t);
+        CursoNegocio cn = new CursoNegocio();
+        if (cn.editarCurso(c)) {
+            JOptionPane.showMessageDialog(this, "Se agregó la tarea correctamente");
+            limpiarCrearTarea();
+        }
+
     }//GEN-LAST:event_btnCrearActionPerformed
 
     private void btnAgregarTareaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarTareaActionPerformed
@@ -291,13 +553,19 @@ public class PrincipalMaestro extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNombreActionPerformed
 
     private void lbInicioMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbInicioMousePressed
-        // TODO add your handling code here:
-        PrincipalMaestro p= new PrincipalMaestro();
+        this.dispose();
+        PrincipalMaestro p = new PrincipalMaestro();
         p.setVisible(true);
     }//GEN-LAST:event_lbInicioMousePressed
 
     private void lbCursosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbCursosMousePressed
-        // TODO add your handling code here:
+        if (!panelCursos.isVisible()) {
+            panelCursos.setVisible(true);
+            linea.setVisible(false);
+        } else {
+            panelCursos.setVisible(false);
+            linea.setVisible(true);
+        }
 
     }//GEN-LAST:event_lbCursosMousePressed
 
@@ -311,8 +579,65 @@ public class PrincipalMaestro extends javax.swing.JFrame {
     }//GEN-LAST:event_lbRowMousePressed
 
     private void lbRow1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbRow1MousePressed
-        // TODO add your handling code here:
+        alumno = null;
+        maestro = null;
+        this.dispose();
+        new Principal().setVisible(true);        
     }//GEN-LAST:event_lbRow1MousePressed
+
+    private void btnUnirseGrupo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirseGrupo1ActionPerformed
+        panelAddCurso.setVisible(true);
+    }//GEN-LAST:event_btnUnirseGrupo1ActionPerformed
+
+    private void btnUnirseGrupo2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirseGrupo2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnUnirseGrupo2ActionPerformed
+
+    private void btnUnirseGrupo4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirseGrupo4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnUnirseGrupo4ActionPerformed
+
+    private void tbTareasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbTareasMouseClicked
+        int fila = tbTareas.getSelectedRow();
+        if (fila != -1) {
+            modelo = (DefaultTableModel) tbTareas.getModel();
+            TareaNegocio tn = new TareaNegocio();
+            CursoNegocio cn = new CursoNegocio();
+            int id = (int) modelo.getValueAt(fila, 0);
+            int idCurso = (int) modelo.getValueAt(fila, 2);
+            curso = cn.obtenerPorId(idCurso);
+            tarea = tn.obtenerPorId(id);
+            this.dispose();
+            new TareaMaestro().setVisible(true);
+        }
+    }//GEN-LAST:event_tbTareasMouseClicked
+
+    private void btnCrear1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrear1ActionPerformed
+        String nombre = txtNombreCurso.getText();
+        CursoNegocio cn = new CursoNegocio();
+        MaestroNegocio mn = new MaestroNegocio();
+        if (cn.obtenerPorNombre(nombre)) {
+            Curso c = new Curso(0, nombre);
+            maestro.getCursos().add(c);
+            if (mn.editarMaestro(maestro)) {
+                JOptionPane.showMessageDialog(this, "Se agregó el curso correctamente");
+                txtNombreCurso.setText("");
+                panelAddCurso.setVisible(false);
+                cargarCursoTareas();
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(this, "Ya existe un curso con este nombre");
+        }
+    }//GEN-LAST:event_btnCrear1ActionPerformed
+
+    private void btnCancelar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelar1ActionPerformed
+        panelAddCurso.setVisible(false);
+    }//GEN-LAST:event_btnCancelar1ActionPerformed
+
+    private void txtNombreCursoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreCursoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNombreCursoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -328,16 +653,24 @@ public class PrincipalMaestro extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PrincipalMaestro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PrincipalMaestro.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PrincipalMaestro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PrincipalMaestro.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PrincipalMaestro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PrincipalMaestro.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PrincipalMaestro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PrincipalMaestro.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -353,9 +686,18 @@ public class PrincipalMaestro extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregarTarea;
     private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnCancelar1;
     private javax.swing.JButton btnCrear;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
+    private javax.swing.JButton btnCrear1;
+    private javax.swing.JButton btnUnirseGrupo1;
+    private javax.swing.JButton btnUnirseGrupo2;
+    private javax.swing.JButton btnUnirseGrupo4;
+    private javax.swing.JComboBox<Curso> cbCursos;
+    private javax.swing.JComboBox<String> cbEscala;
+    private javax.swing.JComboBox<String> cbHora;
+    private javax.swing.JComboBox<String> cbMinutos;
+    private javax.swing.JComboBox<String> cbTurno;
+    private com.toedter.calendar.JDateChooser dcFechaLimite;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -364,7 +706,13 @@ public class PrincipalMaestro extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -375,15 +723,21 @@ public class PrincipalMaestro extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel lbCursos;
     private javax.swing.JLabel lbInicio;
+    private javax.swing.JLabel lbNombre;
     private javax.swing.JLabel lbRow;
     private javax.swing.JLabel lbRow1;
-    private win8.swing.MetroTableUI metroTableUI1;
+    private javax.swing.JSeparator linea;
+    private javax.swing.JPanel panelAddCurso;
     private javax.swing.JPanel panelCurso;
+    private javax.swing.JPanel panelCursos;
+    private javax.swing.JSpinner spMaxPuntos;
+    private win8.swing.MetroTableUI tbCursos;
+    private win8.swing.MetroTableUI tbTareas;
+    private javax.swing.JTextArea txtDescripcion;
     private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextField txtNombreCurso;
     // End of variables declaration//GEN-END:variables
 }
